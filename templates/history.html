@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Loan Prediction History</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="dashboard-header">
+        <h1>Loan Prediction History</h1>
+        <p>View all previously submitted loan applications</p>
+    </header>
+
+    <div class="navigation">
+        <a href="{{ url_for('index') }}">Dashboard</a>
+        <a href="{{ url_for('history') }}">Prediction History</a>
+        <a href="{{ url_for('model_performance') }}">Model Performance</a>
+    </div>
+
+    <section class="dashboard-section">
+
+        <h2>Previous Predictions</h2>
+
+        {% if records %}
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Applicant Income</th>
+                        <th>Co-applicant Income</th>
+                        <th>Loan Amount</th>
+                        <th>Loan Term</th>
+                        <th>Credit History</th>
+                        <th>Education</th>
+                        <th>Employment</th>
+                        <th>Prediction</th>
+                        <th>Approval Probability</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for row in records %}
+
+                    <tr>
+                        <td>{{ row[0] }}</td>
+                        <td>{{ row[1] }}</td>
+                        <td>{{ row[2] }}</td>
+                        <td>{{ row[3] }}</td>
+                        <td>{{ row[4] }}</td>
+
+                        <td>
+                            {% if row[5] == 1 %}
+                                Good
+                            {% else %}
+                                Poor / No History
+                            {% endif %}
+                        </td>
+
+                        <td>{{ row[6] }}</td>
+                        <td>{{ row[7] }}</td>
+
+                        <td>
+                            <strong>{{ row[8] }}</strong>
+                        </td>
+
+                        <td>
+                            {{ "%.2f"|format(row[9]) }}%
+                        </td>
+
+                        <td>{{ row[10] }}</td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        <form action="{{ url_for('clear_history') }}"
+              method="POST"
+              onsubmit="return confirm('Are you sure you want to delete all prediction history?');"
+              style="margin-top: 25px;">
+
+            <button type="submit" class="delete-button">
+                Clear All History
+            </button>
+
+        </form>
+
+        {% else %}
+
+        <div style="text-align: center; padding: 40px;">
+
+            <h3>No Prediction History Found</h3>
+
+            <p>
+                You have not made any loan predictions yet.
+                Submit a customer application to view its prediction here.
+            </p>
+
+            <a href="{{ url_for('index') }}" class="btn">
+                Make a Prediction
+            </a>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+    <div class="dashboard-actions" style="margin-top: 25px;">
+
+        <a href="{{ url_for('index') }}" class="btn">
+            Back to Dashboard
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+</html>

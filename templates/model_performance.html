@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Model Performance Analysis</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="dashboard-header">
+        <h1>Model Performance Analysis</h1>
+        <p>Comparison of Machine Learning Algorithms</p>
+    </header>
+
+
+    <!-- NAVIGATION -->
+    <div class="navigation">
+
+        <a href="{{ url_for('index') }}">Dashboard</a>
+
+        <a href="{{ url_for('history') }}">Prediction History</a>
+
+        <a href="{{ url_for('model_performance') }}">
+            Model Performance
+        </a>
+
+    </div>
+
+
+    <!-- ALGORITHMS -->
+    <section class="dashboard-section">
+
+        <h2>Machine Learning Algorithms Evaluated</h2>
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <h3>Algorithm 1</h3>
+                <p>Logistic Regression</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Algorithm 2</h3>
+                <p>Decision Tree</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Algorithm 3</h3>
+                <p>Random Forest</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- PERFORMANCE TABLE -->
+    <section class="dashboard-section">
+
+        <h2>Model Performance Comparison</h2>
+
+        {% if model_results %}
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+
+                        {% for column in columns %}
+
+                        <th>{{ column }}</th>
+
+                        {% endfor %}
+
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for result in model_results %}
+
+                    <tr>
+
+                        {% for column in columns %}
+
+                        <td>{{ result[column] }}</td>
+
+                        {% endfor %}
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <p>
+            Model comparison data is not available.
+            Please execute train_model.py to generate the results.
+        </p>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- MODEL COMPARISON CHART -->
+    <section class="dashboard-section">
+
+        <h2>Model Comparison Visualization</h2>
+
+        <div class="chart-card">
+
+            <img
+                src="{{ url_for('static', filename='charts/model_comparison.png') }}"
+                alt="Machine learning model performance comparison"
+                style="width: 100%; max-width: 900px; height: auto;">
+
+        </div>
+
+    </section>
+
+
+    <!-- METRIC EXPLANATION -->
+    <section class="dashboard-section">
+
+        <h2>Performance Metrics Explanation</h2>
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <h3>Accuracy</h3>
+                <p>
+                    Measures the proportion of total predictions
+                    that are correct.
+                </p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Precision</h3>
+                <p>
+                    Measures how many predicted approvals
+                    were actually approved in the test dataset.
+                </p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Recall</h3>
+                <p>
+                    Measures how many actual approvals
+                    were correctly identified.
+                </p>
+            </div>
+
+            <div class="stat-card">
+                <h3>F1-Score</h3>
+                <p>
+                    Combines precision and recall into
+                    a single performance measure.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- FOOTER -->
+    <section class="dashboard-actions">
+
+        <a href="{{ url_for('index') }}" class="btn">
+            Back to Dashboard
+        </a>
+
+    </section>
+
+    <p style="text-align: center; margin-top: 25px;">
+        <small>
+            Performance results are based on the project's
+            synthetic dataset and test split.
+        </small>
+    </p>
+
+</div>
+
+</body>
+</html>

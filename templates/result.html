@@ -1,0 +1,162 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Loan Prediction Result</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="dashboard-header">
+        <h1>Loan Approval Prediction System</h1>
+        <p>Customer Loan Application Result</p>
+    </header>
+
+
+    <!-- PREDICTION RESULT -->
+    <section class="dashboard-section">
+
+        <div class="application-section">
+
+            {% if result == "Approved" %}
+
+                <h2 style="color: green;">
+                    Loan Approved
+                </h2>
+
+                <p>
+                    The machine learning model predicts that this
+                    loan application is approved.
+                </p>
+
+            {% else %}
+
+                <h2 style="color: red;">
+                    Loan Rejected
+                </h2>
+
+                <p>
+                    The machine learning model predicts that this
+                    loan application is rejected.
+                </p>
+
+            {% endif %}
+
+            <div class="result-probability">
+
+                <h3>Approval Probability</h3>
+
+                <p style="font-size: 35px; font-weight: bold;">
+                    {{ "%.2f"|format(probability) }}%
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- CUSTOMER DETAILS -->
+    <section class="dashboard-section">
+
+        <h2>Customer Application Details</h2>
+
+        <div class="table-container">
+
+            <table>
+
+                <tbody>
+
+                    <tr>
+                        <th>Applicant Income</th>
+                        <td>{{ applicant_income }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Co-applicant Income</th>
+                        <td>{{ coapplicant_income }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Loan Amount</th>
+                        <td>{{ loan_amount }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Loan Term</th>
+                        <td>{{ loan_term }} Months</td>
+                    </tr>
+
+                    <tr>
+                        <th>Credit History</th>
+                        <td>
+                            {% if credit_history == 1 %}
+                                Good Credit History
+                            {% else %}
+                                No / Poor Credit History
+                            {% endif %}
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th>Education</th>
+                        <td>{{ education }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Self Employed</th>
+                        <td>{{ self_employed }}</td>
+                    </tr>
+
+                    <tr>
+                        <th>Prediction</th>
+                        <td><strong>{{ result }}</strong></td>
+                    </tr>
+
+                    <tr>
+                        <th>Approval Probability</th>
+                        <td>{{ "%.2f"|format(probability) }}%</td>
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </section>
+
+
+    <!-- NAVIGATION -->
+    <section class="dashboard-actions">
+
+        <a href="{{ url_for('index') }}" class="btn">
+            Back to Dashboard
+        </a>
+
+        <a href="{{ url_for('history') }}" class="btn">
+            View Prediction History
+        </a>
+
+    </section>
+
+    <p style="text-align: center; margin-top: 25px;">
+        <small>
+            Educational machine learning prediction only.
+            This result is not an actual bank loan approval.
+        </small>
+    </p>
+
+</div>
+
+</body>
+</html>

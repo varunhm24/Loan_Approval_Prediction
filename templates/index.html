@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Approval Prediction System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="dashboard-header">
+        <h1>Loan Approval Prediction System</h1>
+        <p>Machine Learning Dashboard and Analytics</p>
+    </header>
+
+    <!-- FLASH MESSAGES -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+
+    <!-- CUSTOMER APPLICATION FORM -->
+    <section class="dashboard-section application-section">
+
+        <h2>Customer Loan Application</h2>
+        <p>Enter applicant details to predict loan approval.</p>
+
+        <form action="{{ url_for('predict') }}"
+              method="POST"
+              class="application-form">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="ApplicantIncome">Applicant Income</label>
+                    <input type="number"
+                           id="ApplicantIncome"
+                           name="ApplicantIncome"
+                           min="0.01"
+                           step="any"
+                           placeholder="Enter applicant income"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="CoapplicantIncome">Co-applicant Income</label>
+                    <input type="number"
+                           id="CoapplicantIncome"
+                           name="CoapplicantIncome"
+                           min="0"
+                           step="any"
+                           placeholder="Enter co-applicant income"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="LoanAmount">Loan Amount</label>
+                    <input type="number"
+                           id="LoanAmount"
+                           name="LoanAmount"
+                           min="0.01"
+                           step="any"
+                           placeholder="Enter loan amount"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="Loan_Amount_Term">Loan Amount Term (Months)</label>
+                    <input type="number"
+                           id="Loan_Amount_Term"
+                           name="Loan_Amount_Term"
+                           min="1"
+                           step="1"
+                           placeholder="Example: 360"
+                           required>
+                </div>
+
+                <div class="form-group">
+                    <label for="Credit_History">Credit History</label>
+                    <select id="Credit_History"
+                            name="Credit_History"
+                            required>
+                        <option value="">Select credit history</option>
+                        <option value="1">Good Credit History</option>
+                        <option value="0">No / Poor Credit History</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="Education">Education</label>
+                    <select id="Education"
+                            name="Education"
+                            required>
+                        <option value="">Select education</option>
+                        <option value="Graduate">Graduate</option>
+                        <option value="Not Graduate">Not Graduate</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="Self_Employed">Self Employed</label>
+                    <select id="Self_Employed"
+                            name="Self_Employed"
+                            required>
+                        <option value="">Select employment status</option>
+                        <option value="Yes">Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+
+            </div>
+
+            <button type="submit" class="predict-btn">
+                Predict Loan Approval
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- DASHBOARD STATISTICS -->
+    <section class="dashboard-section">
+
+        <h2>Dashboard Overview</h2>
+
+        <div class="stats-grid">
+
+            <div class="stat-card">
+                <h3>Total Predictions</h3>
+                <p>{{ total_predictions }}</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Approved Loans</h3>
+                <p>{{ approved_count }}</p>
+            </div>
+
+            <div class="stat-card">
+                <h3>Rejected Loans</h3>
+                <p>{{ rejected_count }}</p>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ANALYTICS -->
+    <section class="dashboard-section">
+
+        <h2>Data Analytics and Visualizations</h2>
+
+        <div class="chart-grid">
+
+            <div class="chart-card">
+                <h3>Loan Approval Distribution</h3>
+                <img src="{{ url_for('static', filename='charts/loan_distribution.png') }}"
+                     alt="Loan approval distribution">
+            </div>
+
+            <div class="chart-card">
+                <h3>Applicant Income Distribution</h3>
+                <img src="{{ url_for('static', filename='charts/income_distribution.png') }}"
+                     alt="Applicant income distribution">
+            </div>
+
+            <div class="chart-card">
+                <h3>Credit History Analysis</h3>
+                <img src="{{ url_for('static', filename='charts/credit_history.png') }}"
+                     alt="Credit history analysis">
+            </div>
+
+            <div class="chart-card">
+                <h3>Education Analysis</h3>
+                <img src="{{ url_for('static', filename='charts/education_analysis.png') }}"
+                     alt="Education analysis">
+            </div>
+
+            <div class="chart-card">
+                <h3>Model Performance Comparison</h3>
+                <img src="{{ url_for('static', filename='charts/model_comparison.png') }}"
+                     alt="Model performance comparison">
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- RECENT PREDICTIONS -->
+    <section class="dashboard-section">
+
+        <h2>Recent Predictions</h2>
+
+        {% if recent_predictions %}
+
+        <div class="table-container">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Applicant Income</th>
+                        <th>Loan Amount</th>
+                        <th>Prediction</th>
+                        <th>Approval Probability</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for record in recent_predictions %}
+
+                    <tr>
+                        <td>{{ record[0] }}</td>
+                        <td>{{ record[1] }}</td>
+                        <td>{{ record[3] }}</td>
+                        <td>{{ record[8] }}</td>
+
+                        <td>
+                            {{ "%.2f"|format(record[9]) }}%
+                        </td>
+
+                        <td>{{ record[10] }}</td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <p>No predictions available yet.</p>
+
+        {% endif %}
+
+    </section>
+
+
+    <!-- NAVIGATION -->
+    <section class="dashboard-actions">
+
+        <a href="{{ url_for('history') }}" class="btn">
+            View Prediction History
+        </a>
+
+        <a href="{{ url_for('model_performance') }}" class="btn">
+            Model Performance
+        </a>
+
+        <form action="{{ url_for('clear_history') }}"
+              method="POST"
+              onsubmit="return confirm('Are you sure you want to clear all prediction history?');">
+
+            <button type="submit" class="btn">
+                Clear History
+            </button>
+
+        </form>
+
+    </section>
+
+</div>
+
+</body>
+</html>
